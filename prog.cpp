@@ -20,6 +20,10 @@
 using namespace std;
 
 #define MAX_LINE 80 // The maximum length command
+#define MAX_HISTORY 10
+
+char *history[MAX_HISTORY];
+int history_count = 0;
 
 /**
  * @brief parse out the command and arguments from the input command separated by spaces
@@ -73,6 +77,25 @@ int main(int argc, char *argv[])
         if(strcmp(args[0], "exit") == 0){
             should_run = 0;
             continue;
+        }
+        if(strcmp(args[0], "!!") == 0){
+            if(history_count == 0){
+                printf("No commands in history.\n");
+                continue;
+            }
+            strcpy(command, history[history_count - 1]);
+            printf("%s", command);
+        }else{
+            if(history_count < MAX_HISTORY){
+                history[history_count] = strdup(command);
+                history_count++;
+            }else{
+                free(history[0]);
+                for(int i = 1; i < MAX_HISTORY; i++){
+                    history[i - 1] = history[i];
+                }
+                history[MAX_HISTORY - 1] = strdup(command);
+            }
         }
         pid_t pid = fork();
 
