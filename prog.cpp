@@ -86,6 +86,7 @@ int main(int argc, char *argv[])
             }
             strcpy(command, history[history_count - 1]);
             printf("%s", command);
+            parse_command(command, args);
         }
         if (history_count < MAX_HISTORY) {
             history[history_count] = strdup(command);
@@ -140,7 +141,10 @@ int main(int argc, char *argv[])
         
         else{
             int background = (num_args > 0 && strcmp(args[num_args - 1], "&") == 0);
-            if(!background){
+            if(background){
+                args[num_args - 1] = nullptr;
+            }
+            else{
                 wait(nullptr);
             }
         }
@@ -148,5 +152,6 @@ int main(int argc, char *argv[])
     for(int i = 0; i < history_count; i++){
         free(history[i]);
     }
+    
     return 0;
 }
