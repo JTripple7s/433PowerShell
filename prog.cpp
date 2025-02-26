@@ -60,7 +60,9 @@ int main(int argc, char *argv[])
         printf("osh>");
         fflush(stdout);
         // Read the input command
-        fgets(command, MAX_LINE, stdin);
+        if(fgets(command, MAX_LINE, stdin) == nullptr){
+            continue;
+        }
         // Parse the input command
         int num_args = parse_command(command, args);
 
