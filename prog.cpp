@@ -34,6 +34,7 @@ int parse_command(char command[], char *args[])
     char *token = strtok(command, " \n");
     while(token != nullptr){
         args[count++] = token;
+        token = strtok(nullptr, " \n");
     }
     args[count] = nullptr;
     return count;
@@ -69,8 +70,8 @@ int main(int argc, char *argv[])
         if(num_args == 0){
             continue;
         }
-        if(strcmp(args[0], "exit")){
-            should_run == 0;
+        if(strcmp(args[0], "exit") == 0){
+            should_run = 0;
             continue;
         }
         pid_t pid = fork();
