@@ -78,25 +78,27 @@ int main(int argc, char *argv[])
             should_run = 0;
             continue;
         }
-        if(strcmp(args[0], "!!") == 0){
+
+        if(strcmp(args[0], "!!\n") == 0){
             if(history_count == 0){
                 printf("No commands in history.\n");
                 continue;
             }
             strcpy(command, history[history_count - 1]);
             printf("%s", command);
-        }else{
-            if(history_count < MAX_HISTORY){
-                history[history_count] = strdup(command);
-                history_count++;
-            }else{
-                free(history[0]);
-                for(int i = 1; i < MAX_HISTORY; i++){
-                    history[i - 1] = history[i];
-                }
-                history[MAX_HISTORY - 1] = strdup(command);
-            }
         }
+        if (history_count < MAX_HISTORY) {
+            history[history_count] = strdup(command);
+            history_count++;
+        } 
+        else{
+            free(history[0]);
+            for(int i = 1; i < MAX_HISTORY; i++){
+                history[i - 1] = history[i];
+            }
+             history[MAX_HISTORY - 1] = strdup(command);
+        }
+        
         pid_t pid = fork();
 
         if(pid < 0){
@@ -104,17 +106,47 @@ int main(int argc, char *argv[])
             continue;
         }
         else if(pid == 0){
+
+            int fd;
+            for (int i = 0; i < num_args; i++) {
+                if (strcmp(args[i], ">") == 0) { // Output Redirection
+                    fd = open(args[i + 1], O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
+                    if (fd == -1) {
+                        perror("Error opening file");
+                        exit(EXIT_FAILURE);
+                    }
+                    dup2(fd, STDOUT_FILENO); // Redirect standard output to file
+                    close(fd);
+                    args[i] = nullptr; // Remove ">" from arguments
+                    break;
+                }
+                else if (strcmp(args[i], "<") == 0) { // Input Redirection
+                    fd = open(args[i + 1], O_RDONLY);
+                    if (fd == -1) {
+                        perror("Error opening file");
+                        exit(EXIT_FAILURE);
+                    }
+                    dup2(fd, STDIN_FILENO); // Redirect standard input from file
+                    close(fd);
+                    args[i] = nullptr; // Remove "<" from arguments
+                    break;
+                }
+            }
             if(execvp(args[0], args) == -1){
                 perror("Error execution");
+                exit(EXIT_FAILURE);
             }
-            exit(EXIT_FAILURE);
         }
+        
         else{
             int background = (num_args > 0 && strcmp(args[num_args - 1], "&") == 0);
             if(!background){
                 wait(nullptr);
             }
         }
+    }
+    for(int i = 0; i < history_count; i++){
+        free(history[i]);
     }
     return 0;
 }
