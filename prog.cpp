@@ -59,12 +59,6 @@ int main(int argc, char *argv[]) {
         if (num_args == 0) {
             continue;
         }
-
-        // Handle "exit" command
-        if (strcmp(args[0], "exit") == 0) {
-            should_run = 0;
-            break; 
-        }
                 // Handle "!!" command properly
         if (strcmp(args[0], "!!") == 0) {
             if (history_count == 0) {
@@ -96,6 +90,7 @@ int main(int argc, char *argv[]) {
                 history[MAX_HISTORY - 1] = strdup(command);
             }
         }
+
 
         pid_t pid = fork();
 
