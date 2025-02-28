@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
             }
             strcpy(command, history[history_count - 1]);
             printf("%s\n", command);
-            parse_command(command, args);  
+            command[strcspn(command, "\n")] = '\0';
             num_args = parse_command(command, args);
 
         }
