@@ -55,6 +55,7 @@ int main(int argc, char *argv[]) {
         // Parse the input command
         int num_args = parse_command(command, args);
 
+        //args check
         if (num_args == 0) {
             continue;
         }
@@ -62,10 +63,9 @@ int main(int argc, char *argv[]) {
         // Handle "exit" command
         if (strcmp(args[0], "exit") == 0) {
             should_run = 0;
-            break;  // Exit the loop
+            break; 
         }
-
-        // Handle "!!" (repeat last command)
+        //history check
         if (strcmp(args[0], "!!") == 0) {
             if (history_count == 0) {
                 printf("No commands in history.\n");
@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
             }
             strcpy(command, history[history_count - 1]);
             printf("%s", command);
-            parse_command(command, args);  // Re-parse the command
+            parse_command(command, args);  
         }
 
         // Store command in history
@@ -93,6 +93,7 @@ int main(int argc, char *argv[]) {
         if (pid < 0) {
             perror("Fork failed");
             continue;
+            
         } else if (pid == 0) {  // Child process
             int fd;
             for (int i = 0; i < num_args; i++) {
@@ -124,7 +125,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        // Parent process: Handle background execution
+        // Parent handle background execution
         else {
             int background = (num_args > 0 && strcmp(args[num_args - 1], "&") == 0);
             if (background) {
