@@ -76,20 +76,23 @@ int main(int argc, char *argv[]) {
             command[strcspn(command, "\n")] = '\0';
             num_args = parse_command(command, args);
 
+        }else{
+                // Store command in history
+            if (history_count < MAX_HISTORY) {
+                history[history_count] = strdup(command);
+                history_count++;
+            }
+            else {
+                free(history[0]);  // Free the oldest entry
+                    for (int i = 1; i < MAX_HISTORY; i++) {
+                    free(history[i - 1]);
+                    history[i - 1] = history[i];
+                }
+                history[MAX_HISTORY - 1] = strdup(command);
+            }
         }
 
-        // Store command in history
-        if (history_count < MAX_HISTORY) {
-            history[history_count] = strdup(command);
-            history_count++;
-        } else {
-            free(history[0]);  // Free the oldest entry
-            for (int i = 1; i < MAX_HISTORY; i++) {
-                free(history[i - 1]);
-                history[i - 1] = history[i];
-            }
-            history[MAX_HISTORY - 1] = strdup(command);
-        }
+        
 
         pid_t pid = fork();
 
