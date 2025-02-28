@@ -65,20 +65,23 @@ int main(int argc, char *argv[]) {
                 printf("No commands in history.\n");
                 continue;
             }
+
             // Retrieve last command from history
             strcpy(command, history[history_count - 1]);  
-            printf("%s\n", command);  // Show the user the retrieved command
+            printf("%s\n", command);  // Print the recalled command
 
-            // Remove trailing newline (just in case)
+            // Ensure there are no trailing newlines
             command[strcspn(command, "\n")] = '\0';  
 
-            // Re-parse the command
-            num_args = parse_command(command, args);  
-
-            // Skip adding "!!" to history and instead execute the last command
-        }
+            // Parse the command again
+            num_args = parse_command(command, args);
+            
+        } 
         else {
-            // Store the command in history
+            // Ensure there are no trailing newlines before saving in history
+            command[strcspn(command, "\n")] = '\0';
+
+            // Store the full command in history
             if (history_count < MAX_HISTORY) {
                 history[history_count] = strdup(command);
                 history_count++;
@@ -90,7 +93,6 @@ int main(int argc, char *argv[]) {
                 history[MAX_HISTORY - 1] = strdup(command);
             }
         }
-
 
         pid_t pid = fork();
 
