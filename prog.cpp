@@ -72,8 +72,10 @@ int main(int argc, char *argv[]) {
                 continue;
             }
             strcpy(command, history[history_count - 1]);
-            printf("%s", command);
+            printf("%s\n", command);
             parse_command(command, args);  
+            num_args = parse_command(command, args);
+
         }
 
         // Store command in history
@@ -83,6 +85,7 @@ int main(int argc, char *argv[]) {
         } else {
             free(history[0]);  // Free the oldest entry
             for (int i = 1; i < MAX_HISTORY; i++) {
+                free(history[i - 1]);
                 history[i - 1] = history[i];
             }
             history[MAX_HISTORY - 1] = strdup(command);
@@ -130,15 +133,11 @@ int main(int argc, char *argv[]) {
             int background = (num_args > 0 && strcmp(args[num_args - 1], "&") == 0);
             if (background) {
                 args[num_args - 1] = nullptr;  // Remove "&"
+                num_args--;
             } else {
                 wait(nullptr);
             }
         }
-    }
-
-    // Free allocated memory for history
-    for (int i = 0; i < history_count; i++) {
-        free(history[i]);
     }
     //test
     return 0;
