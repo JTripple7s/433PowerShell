@@ -65,30 +65,36 @@ int main(int argc, char *argv[]) {
             should_run = 0;
             break; 
         }
-        //history check
+                // Handle "!!" command properly
         if (strcmp(args[0], "!!") == 0) {
             if (history_count == 0) {
                 printf("No commands in history.\n");
                 continue;
             }
-            strcpy(command, history[history_count - 1]);
-            printf("%s\n", command);
-            command[strcspn(command, "\n")] = '\0';
-            num_args = parse_command(command, args);
+            // Retrieve last command from history
+            strcpy(command, history[history_count - 1]);  
+            printf("%s\n", command);  // Show the user the retrieved command
 
+            // Remove trailing newline (just in case)
+            command[strcspn(command, "\n")] = '\0';  
+
+            // Re-parse the command
+            num_args = parse_command(command, args);  
+
+            // Skip adding "!!" to history and instead execute the last command
         }
-
-        // Store command in history
-        if (history_count < MAX_HISTORY) {
-            history[history_count] = strdup(command);
-            history_count++;
-        } else {
-            free(history[0]);  // Free the oldest entry
-            for (int i = 1; i < MAX_HISTORY; i++) {
-                free(history[i - 1]);
-                history[i - 1] = history[i];
+        else {
+            // Store the command in history
+            if (history_count < MAX_HISTORY) {
+                history[history_count] = strdup(command);
+                history_count++;
+            } else {
+                free(history[0]);  // Free the oldest entry
+                for (int i = 1; i < MAX_HISTORY; i++) {
+                    history[i - 1] = history[i];
+                }
+                history[MAX_HISTORY - 1] = strdup(command);
             }
-            history[MAX_HISTORY - 1] = strdup(command);
         }
 
         pid_t pid = fork();
