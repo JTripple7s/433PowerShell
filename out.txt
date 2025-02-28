@@ -1,0 +1,5 @@
+Makefile
+out.txt
+prog2
+prog.cpp
+prog.o

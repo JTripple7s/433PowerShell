@@ -140,6 +140,6 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < history_count; i++) {
         free(history[i]);
     }
-
+    //test
     return 0;
 }
