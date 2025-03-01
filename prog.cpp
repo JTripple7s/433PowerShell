@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
             printf("%s", command);
         }
 
-        // Store the command in history (before parsing)
+        // Store the command in history
         if (history_count < MAX_HISTORY) {
             history[history_count] = strdup(command);
             history_count++;
@@ -84,11 +84,12 @@ int main(int argc, char *argv[])
         if(num_args == 0){
             continue;
         }
+        //handle exit command
         if(strcmp(args[0], "exit") == 0){
             should_run = 0;
             continue;
         }
-
+        //fork proccess
         pid_t pid = fork();
 
         if(pid < 0){
